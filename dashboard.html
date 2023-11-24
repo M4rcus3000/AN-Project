@@ -1,56 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AWS S3 Object List</title>
-    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1132.0.min.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      text-align: center;
+      margin: 50px;
+    }
+    
+    #dashboard-container {
+      max-width: 400px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    button {
+      margin: 10px;
+    }
+  </style>
 </head>
 <body>
-    <h1>AWS S3 Object List</h1>
-    <ul id="objectList"></ul>
+  <div id="dashboard-container">
+    <h2>Dashboard</h2>
+    <button onclick="uploadFile()">Upload</button>
+    <button onclick="uploadAndConvertFile()">Upload and Convert</button>
+    <button onclick="location.href = 'http://subnetter-bucket.s3-website-us-east-1.amazonaws.com';">Home</button>
+    <ul id="object-list"></ul>
+  </div>
 
-    <script>
-        // Update these values with your AWS credentials and S3 bucket information
-        const accessKeyId = 'ASIA6QQA5FSCKPAF3DHC';
-        const secretAccessKey = 'sq6Bf5/G6Wl+ucFiNW24QYW3qX23iK5ilTgASLfR';
-        const bucketName = 'subnetter-bucket';
+  <script>
+    function uploadFile() {
+      // Create a file input element
+      const fileInput = document.createElement('input');
+      fileInput.type = 'file';
+      fileInput.accept = '.txt, .pdf, .doc, .docx'; // Specify accepted file types
 
-        // Configure AWS SDK
-        AWS.config.update({
-            accessKeyId: accessKeyId,
-            secretAccessKey: secretAccessKey,
-            region: 'us-east-1' // Change this to your AWS region
-        });
+      // Trigger a click event on the file input
+      fileInput.click();
 
-        // Create an S3 instance
-        const s3 = new AWS.S3();
+      // Listen for the change event when a file is selected
+      fileInput.addEventListener('change', (event) => {
+        const selectedFile = event.target.files[0];
 
-        // Function to list S3 objects
-        function listS3Objects() {
-            const params = {
-                Bucket: bucketName
-            };
+        if (selectedFile) {
+          // Perform the file upload using fetch
+          const formData = new FormData();
+          formData.append('file', selectedFile);
 
-            s3.listObjects(params, (err, data) => {
-                if (err) {
-                    console.error(err);
-                    return;
-                }
-
-                const objectList = document.getElementById('objectList');
-
-                data.Contents.forEach((object) => {
-                    const listItem = document.createElement('li');
-                    listItem.textContent = object.Key;
-                    objectList.appendChild(listItem);
-                });
-            });
+          fetch('/upload', {
+            method: 'POST',
+            body: formData,
+          })
+          .then(response => response.json())
+          .then(data => {
+            alert(data.message); // Display a message (optional)
+            // You can update the UI or perform additional actions as needed
+          })
+          .catch(error => {
+            console.error('Error during file upload:', error);
+          });
         }
+      });
+    }
+    
+    function uploadAndConvertFile() {
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = '.docx';
 
-        // Call the function to list S3 objects
-        listS3Objects();
-    </script>
+    fileInput.click();
+
+    fileInput.addEventListener('change', (event) => {
+      const selectedFile = event.target.files[0];
+
+      if (selectedFile) {
+        const formData = new FormData();
+        formData.append('file', selectedFile);
+
+        fetch('/convert', {
+          method: 'POST',
+          body: formData,
+        })
+        .then(response => response.json())
+        .then(data => {
+          alert(data.message);
+          // You can update the UI or perform additional actions as needed
+        })
+        .catch(error => {
+          console.error('Error during file upload and conversion:', error);
+        });
+      }
+    });
+  }
+    
+  </script>
 </body>
 </html>
