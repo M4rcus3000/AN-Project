@@ -13,10 +13,10 @@ const port = 80;
 
 // Replace these with your actual database credentials
 const db = mysql.createConnection({
-  host: 'db-for-the-win.cth6wfpv9jf0.us-east-1.rds.amazonaws.com',
-  user: 'admin',
-  password: 'travis114',
-  database: 'cloud',
+  host: '',
+  user: '',
+  password: '',
+  database: '',
 });
 
 // Connect to the database
