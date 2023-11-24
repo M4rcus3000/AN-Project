@@ -13,4 +13,9 @@ clear
 sleep 2
 clear
 sudo yum install nodejs npm 
-
+sudo yum install yum-utils
+# Update the package repository
+sudo yum update -y
+# Install required dependencies
+sudo yum install -y git wget
+npm install mammoth puppeteer
