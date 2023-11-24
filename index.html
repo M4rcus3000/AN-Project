@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Page</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      text-align: center;
+      margin: 50px;
+    }
+    
+    #login-container {
+      max-width: 400px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+</head>
+<body>
+  <div id="login-container">
+    <h2>Login</h2>
+    <form id="login-form">
+      <label for="username">Username:</label>
+      <input type="text" id="username" name="username" required><br>
+      
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password" required><br>
+      
+      <button type="button" onclick="authenticateUser()">Login</button>
+    </form>
+    <p id="error-message" style="color: red;"></p>
+  </div>
+
+  <script>
+    function authenticateUser() {
+      const username = document.getElementById('username').value;
+      const password = document.getElementById('password').value;
+
+      fetch('/authenticate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.success) {
+          alert(data.message); // Display a message (optional)
+          window.location.href = 'http://subnetter-bucket.s3-website-us-east-1.amazonaws.com/'; // Redirect upon successful login
+        } else {
+          document.getElementById('error-message').textContent = data.message;
+        }
+      })
+      .catch(error => {
+        console.error('Error during authentication:', error);
+      });
+    }
+  </script>
+</body>
+</html>

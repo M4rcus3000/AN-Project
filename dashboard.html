@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS S3 Object List</title>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1132.0.min.js"></script>
+</head>
+<body>
+    <h1>AWS S3 Object List</h1>
+    <ul id="objectList"></ul>
+
+    <script>
+        // Update these values with your AWS credentials and S3 bucket information
+        const accessKeyId = 'ASIA6QQA5FSCKPAF3DHC';
+        const secretAccessKey = 'sq6Bf5/G6Wl+ucFiNW24QYW3qX23iK5ilTgASLfR';
+        const bucketName = 'subnetter-bucket';
+
+        // Configure AWS SDK
+        AWS.config.update({
+            accessKeyId: accessKeyId,
+            secretAccessKey: secretAccessKey,
+            region: 'us-east-1' // Change this to your AWS region
+        });
+
+        // Create an S3 instance
+        const s3 = new AWS.S3();
+
+        // Function to list S3 objects
+        function listS3Objects() {
+            const params = {
+                Bucket: bucketName
+            };
+
+            s3.listObjects(params, (err, data) => {
+                if (err) {
+                    console.error(err);
+                    return;
+                }
+
+                const objectList = document.getElementById('objectList');
+
+                data.Contents.forEach((object) => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = object.Key;
+                    objectList.appendChild(listItem);
+                });
+            });
+        }
+
+        // Call the function to list S3 objects
+        listS3Objects();
+    </script>
+</body>
+</html>
